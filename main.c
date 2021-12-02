@@ -3,14 +3,14 @@
 
 int main(void) {
 	FILE *entrada, *matriz_saida;
-	double LX, LY, DT, G, DX, DY; 
+	double LX, LY, DT, G, DX, DY, erro; 
 	int NX, NY, n, N, w, f, m;
-	double *d, *a, *b, *c;
+	double *d, *a, *b, *c, *x;
 
 	entrada = fopen("entrada.txt", "r");
 
 	//LX LY n DT G w f m
-	fscanf(entrada, "%lf %lf %d %lf %lf %d %d %d", &LX, &LY, &n, &DT, &G, &w, &f, &m);
+	fscanf(entrada, "%lf %lf %d %lf %lf %d %d %d %lf", &LX, &LY, &n, &DT, &G, &w, &f, &m, &erro);
 	NX = NY = n;
 	N = NX*NY; //quantidade de linhas da matriz quadrada
 
@@ -29,11 +29,7 @@ int main(void) {
 	a = aloca_vetor(N); 
 	inicializa_vetor_a(a, n, G, DT, b, c);
 
-	SOR(a, b, c, d, n);
-
-	//printf("LX=%lf\nLY=%lf\nn=%d\nDT=%lf\nG=%lf\nw=%d\nf=%d\nm=%d\n", LX, LY, n, DT, G, w, f, m);
-
-	imprime_vetor(a, N);
+	x = SOR(a, b, c, d, n, w, erro);
 
   return 0;
 }

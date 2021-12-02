@@ -14,7 +14,7 @@ void inicializa_vetor_d(double *d, int N, int f, int m){
 	int i;
 	for(i=0; i<N; i++){
 		//inicializa as posições do vetor d com o valor de f
-		if( i != (N - 1)/2 ) 
+		if( i != (N-1)/2 ) 
 			d[i] = (double) f;
 		//o elemento central do vetor d é inicializado com a diferença entre f e m
 		else
@@ -64,12 +64,12 @@ void inicializa_vetor_a(double *a, int n, double G, double DT, double *b, double
 
 	for(i=1; i<N/2+1; i++){
 		//inicializa a segunda linha até a (NX-1)-ésima e da (N-NX+2)-ésima até (N-1)-ésima linha de a
-		if(i<NX-1){
+		if(i < NX-1){
 			a[i] = G/DT + fabs(b[i-1]) + fabs(b[i]) + fabs(c[i]);
 			a[N-i-1] = a[i];
 		}
 		//inicializa os demais elementos de a
-		else if(i>=NX){
+		else if(i >= NX){
 			a[i] = G/DT + fabs(b[i-1])+ fabs(b[i]) + 2*fabs(c[i]);
 			a[N-i-1] = a[i];
 		}
@@ -85,34 +85,85 @@ void imprime_vetor(double *vetor, int N){
 	}
 }
 
+//escreve solução em um arquivo de saída
+void escreve_saida(double *x, int tam, int repeticoes){
+	int i;
+	FILE *saida;
+
+	saida = fopen("saida.txt", "w");
+
+	if(!saida)
+		return;
+
+	fprintf(saida, "%d\n", repeticoes);
+	for(i=0; i<tam; i++){
+		fprintf(saida, "x[%d] = %lf\n", i, x[i]);
+	}
+
+	fclose(saida);
+}
+
 //método de Sobre-Relaxação Sucessiva
 //recebe os vetores que formam a matriz e a variável n
-double * SOR(double *a, double *b, double *c, double *d, int n){
+double * SOR(double *a, double *b, double *c, double *d, int n, int w, double erro){
 	int i, k, N, max_repeticoes = 100;
-	double *x, erro = 0.1;
+	double *x, max_e, xk, e, R;
 	
 	N = n*n;
 	x = (double *) calloc(N, sizeof(double));
 
-	for(k=0; erro>=0.1 && k < max_repeticoes; k++){
+	for(k=0; k<max_repeticoes; k++){
 		for(i=0; i<N; i++){
-			//x[i] = (d[i] - c[i] - b[i] - c[i] - b[i])/a[i];
+			xk = x[i];
 
-			x[i] = d[i];
+			//começa a calcular o resíduo
+			R = d[i] - xk*a[i];
 
-			if( i>=n )
-				x[i] -= c[i-n];
-			if( i%n != 0 )
-				x[i] -= b[i-1];
-			if( (i+1)%n != 0 )
-				x[i] -= b[i];
-			if( i<N-n )
-				x[i] -= c[i]
+			//primeira condição (c abaixo da diagonal principal)
+			if(i >= n){
+				R -= c[i-n]*x[i-n];
+			}
+			//segunda condição (b abaixo da diagonal principal)
+			if(i%n != 0){
+				R -= b[i-1]*x[i-1];
+			}
+			//terceira cndição (b acima da diagonal principal)
+			if((i+1)%n != 0){
+				R -= b[i]*x[i+1];
+			}
+			//quarta condição (c acima da diagonal principal)
+			if(i < N-n){
+				R -= c[i]*x[i+n];
+			}
 
-			x[i] /= a[i]
+			//calcula o x1(k+1) -> x1(k+1) = x(k) + w/aii * R(k)
+			x[i] = xk + (w/a[i])*R;
+
+			//calcula o erro da primeira iteração de x(k)
+			if(i == 0){
+				max_e = fabs(xk - x[0]);
+				e = max_e;
+			}
+			//calcula o erro das próximas iterações de x(k)
+			else{
+				e = fabs(xk - x[i]);
+			}
+			
+			//verifica qual dos erros de x(k) é o maior
+			if(max_e < e)
+				max_e = e;
+		}
+		
+		//caso o erro seja atingido para as iterações
+		if(max_e <= erro){
+			//escreve solução no arquivo de saída
+			escreve_saida(x, N, k);
+			return x;
 		}
 	}
 
+	//escreve solução no arquivo de saída
+	escreve_saida(x, N, k);
 	return x;
 }
 
