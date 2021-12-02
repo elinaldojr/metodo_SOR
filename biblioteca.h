@@ -96,7 +96,20 @@ double * SOR(double *a, double *b, double *c, double *d, int n){
 
 	for(k=0; erro>=0.1 && k < max_repeticoes; k++){
 		for(i=0; i<N; i++){
-			x[i] = (d[i] - c[i] - b[i] - c[i] - b[i])/a[i];
+			//x[i] = (d[i] - c[i] - b[i] - c[i] - b[i])/a[i];
+
+			x[i] = d[i];
+
+			if( i>=n )
+				x[i] -= c[i-n];
+			if( i%n != 0 )
+				x[i] -= b[i-1];
+			if( (i+1)%n != 0 )
+				x[i] -= b[i];
+			if( i<N-n )
+				x[i] -= c[i]
+
+			x[i] /= a[i]
 		}
 	}
 
