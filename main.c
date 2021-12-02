@@ -21,13 +21,15 @@ int main(void) {
 	inicializa_vetor_d(d, N, f, m);
 	
 	b = aloca_vetor(N-1);
-	inicializa_vetor_b(b, N-1, DX, NX); //b = -1/(DX*DX);
+	inicializa_vetor_b(b, N-1, DX, NX); 
 
 	c = aloca_vetor(N-NY);
-	inicializa_vetor_c(c, N-NY, DY); //c = -1/(DY*DY);
+	inicializa_vetor_c(c, N-NY, DY); 
 	
 	a = aloca_vetor(N); 
-	inicializa_vetor_a(a, N, NX, G, DT, b, c);
+	inicializa_vetor_a(a, n, G, DT, b, c);
+
+	SOR(a, b, c, d, n);
 
 	//printf("LX=%lf\nLY=%lf\nn=%d\nDT=%lf\nG=%lf\nw=%d\nf=%d\nm=%d\n", LX, LY, n, DT, G, w, f, m);
 
