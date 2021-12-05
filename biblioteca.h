@@ -170,7 +170,7 @@ double * SOR(double *a, double *b, double *c, double *d, int n, double w, double
 		//caso o erro seja atingido para as iterações
 		if(max_e <= erro){
 			//escreve solução no arquivo de saída
-			escreve_saida(x, N, k);
+			escreve_saida(x, N, k+1);
 			return x;
 		}
 	}
