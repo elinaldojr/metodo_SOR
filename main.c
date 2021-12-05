@@ -3,14 +3,25 @@
 
 int main(void) {
 	FILE *entrada, *matriz_saida;
-	double LX, LY, DT, G, DX, DY, erro; 
-	int NX, NY, n, N, w, f, m;
+	double LX, LY, DT, G, DX, DY, w, erro; 
+	int NX, NY, n, N, f, m;
 	double *d, *a, *b, *c, *x;
 
 	entrada = fopen("entrada.txt", "r");
 
 	//LX LY n DT G w f m
-	fscanf(entrada, "%lf %lf %d %lf %lf %d %d %d %lf", &LX, &LY, &n, &DT, &G, &w, &f, &m, &erro);
+	fscanf(entrada, "%lf %lf %d %lf %lf %lf %d %d %lf", &LX, &LY, &n, &DT, &G, &w, &f, &m, &erro);
+
+	printf("LX: %lf\n", LX); 
+	printf("LY: %lf\n", LY);
+	printf("n=NX=NY: %d\n", n);
+	printf("DT: %lf\n", DT);  
+	printf("G: %lf\n", G); 
+	printf("w: %lf\n", w);
+	printf("f: %d\n", f);
+	printf("m: %d\n", m);
+	printf("erro: %lf\n", erro);
+
 	NX = NY = n;
 	N = NX*NY; //quantidade de linhas da matriz quadrada
 
@@ -30,6 +41,16 @@ int main(void) {
 	inicializa_vetor_a(a, n, G, DT, b, c);
 
 	x = SOR(a, b, c, d, n, w, erro);
+
+	printf("\n");
+	imprime_vetor(x, n);
+	
+	fclose(entrada);
+	free(a);
+	free(b);
+	free(c);
+	free(d);
+	free(x);
 
   return 0;
 }

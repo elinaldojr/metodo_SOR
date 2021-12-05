@@ -78,10 +78,23 @@ void inicializa_vetor_a(double *a, int n, double G, double DT, double *b, double
 
 //mostra os elementos de um vetor
 //recebe o vetor e o seu tamanho
-void imprime_vetor(double *vetor, int N){
+void imprime_vetor(double *vetor, int n){
+	int i, j, NX, NY;
+	NX = NY = n;
+
+	for(i=0; i<NX; i++){
+		for(j=0; j<NY; j++){
+			printf("%8.6lf ", vetor[i*n +j]);
+		}
+		printf("\n");
+	}
+}
+
+void imprime_vetor2(double *vetor, int tam){
 	int i;
-	for(i=0; i<N; i++){
-		printf("%d %lf \n", i, vetor[i]);
+
+	for(i=0; i<tam; i++){
+		printf("%8.6lf ", vetor[i]);
 	}
 }
 
@@ -105,9 +118,9 @@ void escreve_saida(double *x, int tam, int repeticoes){
 
 //método de Sobre-Relaxação Sucessiva
 //recebe os vetores que formam a matriz e a variável n
-double * SOR(double *a, double *b, double *c, double *d, int n, int w, double erro){
+double * SOR(double *a, double *b, double *c, double *d, int n, double w, double erro){
 	int i, k, N, max_repeticoes = 100;
-	double *x, max_e, xk, e, R;
+	double *x, xk, max_e, e, R;
 	
 	N = n*n;
 	x = (double *) calloc(N, sizeof(double));
@@ -117,7 +130,7 @@ double * SOR(double *a, double *b, double *c, double *d, int n, int w, double er
 			xk = x[i];
 
 			//começa a calcular o resíduo
-			R = d[i] - xk*a[i];
+			R = d[i];
 
 			//primeira condição (c abaixo da diagonal principal)
 			if(i >= n){
@@ -136,8 +149,8 @@ double * SOR(double *a, double *b, double *c, double *d, int n, int w, double er
 				R -= c[i]*x[i+n];
 			}
 
-			//calcula o x1(k+1) -> x1(k+1) = x(k) + w/aii * R(k)
-			x[i] = xk + (w/a[i])*R;
+			//calcula o x(k+1) -> x(k+1) = w/aii * R(k) - (w-1)*x(k) 
+			x[i] = (w/a[i])*R - (w-1)*x[i];
 
 			//calcula o erro da primeira iteração de x(k)
 			if(i == 0){
